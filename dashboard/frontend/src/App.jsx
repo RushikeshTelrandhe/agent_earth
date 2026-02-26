@@ -22,18 +22,30 @@ function hasWebGL() {
 }
 
 /* ── Helpers ──────────────────────────── */
-const COLORS = ["#6366f1", "#06b6d4", "#22c55e", "#f59e0b", "#f43f5e", "#a855f7"];
-const RES_COLORS = { water: "#3b82f6", food: "#22c55e", energy: "#f59e0b", land: "#a78bfa" };
+const COLORS = ["#7B5CFF", "#06b6d4", "#22c55e", "#f59e0b", "#f43f5e", "#9B6CFF"];
+const RES_COLORS = { water: "#3b82f6", food: "#22c55e", energy: "#f59e0b", land: "#9B6CFF" };
 const plotLayout = (title, extra = {}) => ({
   title: { text: title, font: { color: "#e2e8f0", size: 14 } },
   paper_bgcolor: "transparent", plot_bgcolor: "transparent",
-  font: { color: "#94a3b8", size: 11 },
+  font: { color: "#A8B2D1", size: 11 },
   margin: { l: 50, r: 20, t: 40, b: 40 },
-  xaxis: { gridcolor: "rgba(148,163,184,0.08)" },
-  yaxis: { gridcolor: "rgba(148,163,184,0.08)" },
-  legend: { font: { size: 10 }, bgcolor: "transparent" },
+  xaxis: { gridcolor: "rgba(123,92,255,0.06)", zerolinecolor: "rgba(123,92,255,0.08)" },
+  yaxis: { gridcolor: "rgba(123,92,255,0.06)", zerolinecolor: "rgba(123,92,255,0.08)" },
+  legend: { font: { size: 10, color: "#A8B2D1" }, bgcolor: "transparent" },
   ...extra,
 });
+
+const FEATURES = [
+  { icon: "🧠", title: "Multi-Agent RL", desc: "Independent PPO agents learn adaptive strategies through reinforcement learning in a shared environment." },
+  { icon: "🌐", title: "Emergent Trade", desc: "Agents discover trade partnerships, build trust, and form alliances without explicit programming." },
+  { icon: "🌡️", title: "Climate Dynamics", desc: "Stochastic disasters with per-region vulnerability drive behavioral divergence across populations." },
+  { icon: "📊", title: "Real-time Analytics", desc: "Survival rates, Gini inequality, strategy evolution, and behavioral clustering — all in real time." },
+  { icon: "🔬", title: "Research Grade", desc: "Designed for reproducible experiments with configurable presets, seed control, and detailed logging." },
+];
+
+function scrollToDashboard() {
+  document.getElementById('dashboard-section')?.scrollIntoView({ behavior: 'smooth' });
+}
 
 function getStrategyType(action) {
   if (action === "trade" || action === "conserve") return "cooperative";
@@ -97,138 +109,209 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* ── Header ─── */}
-      <header className="header">
-        <div className="header-glow" />
-        <h1>Agent Earth</h1>
-        <p className="subtitle">Adaptive Multi-Agent Resource Scarcity Simulator</p>
-      </header>
-
-      {/* ── Tab Navigation ─── */}
-      <nav className="tab-nav">
-        <button className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
-          📊 Analytics
-        </button>
-        <button className={`tab-btn ${activeTab === 'globe' ? 'active' : ''}`} onClick={() => { setActiveTab('globe'); setGlobeLoaded(true); }} disabled={!hasWebGL()}>
-          🌍 Holographic Earth
+      {/* ═══ FLOATING GLASS NAVBAR ═══ */}
+      <nav className="navbar">
+        <div className="navbar-logo">
+          <span className="logo-glyph">🌍</span>
+          <span>AgentEarth</span>
+        </div>
+        <div className="navbar-links">
+          <button className={`nav-link ${!data ? 'active' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</button>
+          <button className={`nav-link ${data ? 'active' : ''}`} onClick={scrollToDashboard}>Simulation</button>
+          <button className="nav-link" onClick={scrollToDashboard}>Ecosystem</button>
+          <button className="nav-link" onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}>Technology</button>
+          <button className="nav-link" onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}>Research</button>
+        </div>
+        <button className="navbar-cta" onClick={runSim} disabled={loading}>
+          {loading ? "Running..." : "Launch Simulation"}
         </button>
       </nav>
 
-      {/* ── Controls ─── */}
-      <section className="controls-section">
-        <div className="controls-grid">
-          <div className="control-group">
-            <label>Preset</label>
-            <select value={preset} onChange={e => setPreset(e.target.value)}>
-              <option value="default">Default</option>
-              <option value="scarcity">Scarcity</option>
-              <option value="abundance">Abundance</option>
-            </select>
-          </div>
-          <div className="control-group">
-            <label>Mode</label>
-            <select value={mode} onChange={e => setMode(e.target.value)}>
-              <option value="independent">Independent Agents</option>
-              <option value="shared">Shared Policy</option>
-            </select>
-          </div>
-          <div className="control-group">
-            <label>Climate Severity <span className="val">{severity.toFixed(1)}</span></label>
-            <input type="range" min="0" max="3" step="0.1" value={severity} onChange={e => setSeverity(+e.target.value)} />
-          </div>
-          <div className="control-group">
-            <label>Timesteps <span className="val">{steps}</span></label>
-            <input type="range" min="50" max="1000" step="50" value={steps} onChange={e => setSteps(+e.target.value)} />
-          </div>
-          <button className="run-btn" onClick={runSim} disabled={loading}>
-            {loading ? "Running..." : "Simulate"}
+      {/* ═══ HERO SECTION ═══ */}
+      <section className="hero">
+        <div className="hero-glow" />
+        <div className="hero-badge">🌍 Autonomous Planet Intelligence</div>
+        <h1>Simulate Earth Using Adaptive AI Agents</h1>
+        <p className="hero-sub">
+          Watch autonomous agents learn to trade, cooperate, and survive under climate pressure.
+          A research-grade multi-agent reinforcement learning simulator.
+        </p>
+        <div className="hero-buttons">
+          <button className="btn-primary" onClick={runSim} disabled={loading}>
+            {loading ? "Simulating..." : "Run Simulation"}
           </button>
+          <button className="btn-secondary" onClick={scrollToDashboard}>Explore Dashboard</button>
         </div>
-        <div className="saved-runs">
-          <button className="secondary-btn" onClick={fetchRuns}>Saved Runs</button>
-          {savedRuns.slice(-8).map(f => (
-            <button key={f} className="run-chip" onClick={() => loadRun(f)}>{f.replace("run_", "").replace(".json", "")}</button>
+      </section>
+
+      {/* ═══ TECH STRIP ═══ */}
+      <div className="tech-strip">
+        <div className="tech-strip-label">Powered by Advanced AI Infrastructure</div>
+        <div className="tech-strip-items">
+          <span className="tech-strip-item">Multi-Agent Systems</span>
+          <span className="tech-strip-item">Reinforcement Learning</span>
+          <span className="tech-strip-item">Climate Models</span>
+          <span className="tech-strip-item">Distributed Simulation</span>
+          <span className="tech-strip-item">Real-time Analytics</span>
+        </div>
+      </div>
+
+      {/* ═══ FEATURES GRID ═══ */}
+      <section className="features-section" id="features-section">
+        <div className="features-header">
+          <h2>Intelligence Infrastructure</h2>
+          <p>Built for research-grade autonomous simulation at planetary scale</p>
+        </div>
+        <div className="features-grid">
+          {FEATURES.slice(0, 3).map((f, i) => (
+            <div key={i} className="feature-card">
+              <div className="feature-icon">{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="features-grid-bottom">
+          {FEATURES.slice(3).map((f, i) => (
+            <div key={i} className="feature-card">
+              <div className="feature-icon">{f.icon}</div>
+              <h3>{f.title}</h3>
+              <p>{f.desc}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      {data && (
-        <>
-          {/* ── Summary Cards ─── */}
-          <SummaryCards summary={summary} analysis={analysis} />
+      <hr className="section-divider" />
 
-          {/* ── Insights ─── */}
-          {analysis.insights && (
-            <div className="insights-banner">
-              <strong>AI Insights: </strong>{analysis.insights}
+      {/* ═══ DASHBOARD SECTION ═══ */}
+      <div id="dashboard-section">
+        {/* ── Tab Navigation ─── */}
+        <nav className="tab-nav">
+          <button className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
+            📊 Analytics
+          </button>
+          <button className={`tab-btn ${activeTab === 'globe' ? 'active' : ''}`} onClick={() => { setActiveTab('globe'); setGlobeLoaded(true); }} disabled={!hasWebGL()}>
+            🌍 Holographic Earth
+          </button>
+        </nav>
+
+        {/* ── Controls ─── */}
+        <section className="controls-section">
+          <div className="controls-grid">
+            <div className="control-group">
+              <label>Preset</label>
+              <select value={preset} onChange={e => setPreset(e.target.value)}>
+                <option value="default">Default</option>
+                <option value="scarcity">Scarcity</option>
+                <option value="abundance">Abundance</option>
+              </select>
             </div>
-          )}
-
-          {/* ── Globe Tab (persistent mount — hidden via CSS, never unmounted) ─── */}
-          {globeLoaded && (
-            <div style={{ display: activeTab === 'globe' ? 'block' : 'none' }}>
-              <section className="chart-section">
-                <h2>
-                  <span className="icon">🌍</span> Holographic Earth
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 400, marginLeft: 8 }}>node size=pop, color=strategy, arcs=trade</span>
-                  <button
-                    onClick={() => setSafeMode(m => !m)}
-                    style={{
-                      marginLeft: 12, padding: '2px 10px', fontSize: '0.65rem',
-                      borderRadius: 6, border: '1px solid rgba(148,163,184,0.2)',
-                      background: safeMode ? 'rgba(34,197,94,0.15)' : 'transparent',
-                      color: safeMode ? '#22c55e' : '#64748b', cursor: 'pointer',
-                      fontFamily: 'Inter,sans-serif', verticalAlign: 'middle',
-                    }}
-                  >
-                    {safeMode ? '🛡️ Safe Mode ON' : '🛡️ Safe Mode'}
-                  </button>
-                </h2>
-                <WebGLErrorBoundary height={600} onFallback={() => setActiveTab('analytics')}>
-                  <Suspense fallback={<div style={{ height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>Loading 3D Engine...</div>}>
-                    <GlobeScene stepData={replayData} allSteps={allSteps} replayStep={replayStep} safeMode={safeMode} />
-                  </Suspense>
-                </WebGLErrorBoundary>
-              </section>
-              <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
+            <div className="control-group">
+              <label>Mode</label>
+              <select value={mode} onChange={e => setMode(e.target.value)}>
+                <option value="independent">Independent Agents</option>
+                <option value="shared">Shared Policy</option>
+              </select>
             </div>
-          )}
+            <div className="control-group">
+              <label>Climate Severity <span className="val">{severity.toFixed(1)}</span></label>
+              <input type="range" min="0" max="3" step="0.1" value={severity} onChange={e => setSeverity(+e.target.value)} />
+            </div>
+            <div className="control-group">
+              <label>Timesteps <span className="val">{steps}</span></label>
+              <input type="range" min="50" max="1000" step="50" value={steps} onChange={e => setSteps(+e.target.value)} />
+            </div>
+            <button className="run-btn" onClick={runSim} disabled={loading}>
+              {loading ? "Running..." : "Simulate"}
+            </button>
+          </div>
+          <div className="saved-runs">
+            <button className="secondary-btn" onClick={fetchRuns}>Saved Runs</button>
+            {savedRuns.slice(-8).map(f => (
+              <button key={f} className="run-chip" onClick={() => loadRun(f)}>{f.replace("run_", "").replace(".json", "")}</button>
+            ))}
+          </div>
+        </section>
 
-          {/* ── Analytics Tab ─── */}
-          {activeTab === 'analytics' && (
-            <>
-              {/* ── Agent Behavior Cards ─── */}
-              <AgentCards replayData={replayData} analysis={analysis} />
+        {data && (
+          <>
+            {/* ── Summary Cards ─── */}
+            <SummaryCards summary={summary} analysis={analysis} />
 
-              {/* ── Trade Network ─── */}
-              <TradeNetwork allSteps={allSteps} numRegions={numRegions} replayStep={replayStep} />
-
-              {/* ── Strategy Evolution Timeline ─── */}
-              <StrategyTimeline analysis={analysis} allSteps={allSteps} numRegions={numRegions} />
-
-              {/* ── Resource Time Series + Trust Heatmap ─── */}
-              <div className="chart-grid" style={{ marginBottom: 22 }}>
-                <ResourceTimeSeries allSteps={allSteps} numRegions={numRegions} />
-                <TrustHeatmap allSteps={allSteps} replayStep={replayStep} numRegions={numRegions} />
+            {/* ── Insights ─── */}
+            {analysis.insights && (
+              <div className="insights-banner">
+                <strong>AI Insights: </strong>{analysis.insights}
               </div>
+            )}
 
-              {/* ── Collapse Replay ─── */}
-              <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
-
-              {/* ── Climate Resilience + Trade Dependency ─── */}
-              <div className="chart-grid" style={{ marginBottom: 22 }}>
-                <ResilienceTable analysis={analysis} />
-                <TradeDependency analysis={analysis} numRegions={numRegions} />
+            {/* ── Globe Tab (persistent mount — hidden via CSS, never unmounted) ─── */}
+            {globeLoaded && (
+              <div style={{ display: activeTab === 'globe' ? 'block' : 'none' }}>
+                <section className="chart-section">
+                  <h2>
+                    <span className="icon">🌍</span> Holographic Earth
+                    <span style={{ fontSize: '0.7rem', color: '#5A6380', fontWeight: 400, marginLeft: 8 }}>node size=pop, color=strategy, arcs=trade</span>
+                    <button
+                      onClick={() => setSafeMode(m => !m)}
+                      style={{
+                        marginLeft: 12, padding: '3px 12px', fontSize: '0.65rem',
+                        borderRadius: 8, border: '1px solid rgba(123,92,255,0.2)',
+                        background: safeMode ? 'rgba(34,197,94,0.12)' : 'transparent',
+                        color: safeMode ? '#22c55e' : '#5A6380', cursor: 'pointer',
+                        fontFamily: 'Inter,sans-serif', verticalAlign: 'middle',
+                      }}
+                    >
+                      {safeMode ? '🛡️ Safe Mode ON' : '🛡️ Safe Mode'}
+                    </button>
+                  </h2>
+                  <WebGLErrorBoundary height={600} onFallback={() => setActiveTab('analytics')}>
+                    <Suspense fallback={<div style={{ height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#5A6380' }}>Loading 3D Engine...</div>}>
+                      <GlobeScene stepData={replayData} allSteps={allSteps} replayStep={replayStep} safeMode={safeMode} />
+                    </Suspense>
+                  </WebGLErrorBoundary>
+                </section>
+                <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
               </div>
+            )}
 
-              {/* ── Clusters ─── */}
-              <Clusters analysis={analysis} />
-            </>
-          )}
-        </>
-      )}
+            {/* ── Analytics Tab ─── */}
+            {activeTab === 'analytics' && (
+              <>
+                {/* ── Agent Behavior Cards ─── */}
+                <AgentCards replayData={replayData} analysis={analysis} />
 
-      <footer className="footer">Agent Earth v2 - Multi-Agent RL Simulator</footer>
+                {/* ── Trade Network ─── */}
+                <TradeNetwork allSteps={allSteps} numRegions={numRegions} replayStep={replayStep} />
+
+                {/* ── Strategy Evolution Timeline ─── */}
+                <StrategyTimeline analysis={analysis} allSteps={allSteps} numRegions={numRegions} />
+
+                {/* ── Resource Time Series + Trust Heatmap ─── */}
+                <div className="chart-grid" style={{ marginBottom: 24 }}>
+                  <ResourceTimeSeries allSteps={allSteps} numRegions={numRegions} />
+                  <TrustHeatmap allSteps={allSteps} replayStep={replayStep} numRegions={numRegions} />
+                </div>
+
+                {/* ── Collapse Replay ─── */}
+                <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
+
+                {/* ── Climate Resilience + Trade Dependency ─── */}
+                <div className="chart-grid" style={{ marginBottom: 24 }}>
+                  <ResilienceTable analysis={analysis} />
+                  <TradeDependency analysis={analysis} numRegions={numRegions} />
+                </div>
+
+                {/* ── Clusters ─── */}
+                <Clusters analysis={analysis} />
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      <footer className="footer">Agent Earth — Autonomous Intelligence Platform</footer>
     </div>
   );
 }
@@ -353,7 +436,7 @@ function TradeNetwork({ allSteps, numRegions, replayStep }) {
   traces.push({
     x: nodeX, y: nodeY,
     mode: "markers+text",
-    marker: { size: 28, color: COLORS.slice(0, numRegions), line: { width: 2, color: "#1a2035" } },
+    marker: { size: 28, color: COLORS.slice(0, numRegions), line: { width: 2, color: "#070B1A" } },
     text: nodeText,
     textfont: { color: "#f1f5f9", size: 12, weight: 700 },
     textposition: "middle center",
@@ -500,9 +583,9 @@ function TrustHeatmap({ allSteps, replayStep, numRegions }) {
           data={[{
             z: trustMatrix, x: labels, y: labels,
             type: "heatmap",
-            colorscale: [[0, "#0f172a"], [0.5, "#6366f1"], [1, "#22c55e"]],
+            colorscale: [[0, "#070B1A"], [0.3, "#0F0B2E"], [0.6, "#7B5CFF"], [1, "#22c55e"]],
             showscale: true,
-            colorbar: { tickfont: { color: "#94a3b8" }, len: 0.8 },
+            colorbar: { tickfont: { color: "#A8B2D1" }, len: 0.8 },
           }]}
           layout={plotLayout("", {
             height: 300, width: 340,
@@ -516,28 +599,112 @@ function TrustHeatmap({ allSteps, replayStep, numRegions }) {
   );
 }
 
+/* ══════════ Collapse Risk Meter ══════════ */
+function RiskMeter({ explanation }) {
+  if (!explanation) return null;
+  const risk = explanation.collapse_risk || 0;
+  const level = explanation.risk_level || "safe";
+  const tooltip = explanation.risk_tooltip || "";
+  const color = level === "critical" ? "#ef4444" : level === "warning" ? "#f59e0b" : "#22c55e";
+  return (
+    <div className="risk-meter" title={tooltip}>
+      <div className="risk-meter-label">
+        <span style={{ fontSize: "0.62rem", color: "#5A6380", textTransform: "uppercase", letterSpacing: "0.5px" }}>Risk</span>
+        <span style={{ fontSize: "0.68rem", fontWeight: 700, color }}>{(risk * 100).toFixed(0)}%</span>
+      </div>
+      <div className="risk-meter-bar">
+        <div className="risk-meter-fill" style={{ width: `${risk * 100}%`, background: color }} />
+      </div>
+    </div>
+  );
+}
+
+/* ══════════ Factor Bar ══════════ */
+function FactorBar({ factor }) {
+  const pct = (factor.contribution * 100).toFixed(0);
+  return (
+    <div className="factor-row">
+      <span className="factor-icon">{factor.icon}</span>
+      <span className="factor-name">{factor.name}</span>
+      <div className="factor-bar">
+        <div className="factor-bar-fill" style={{ width: `${pct}%` }} />
+      </div>
+      <span className="factor-pct">{pct}%</span>
+    </div>
+  );
+}
+
+/* ══════════ Collapse Explanation Panel ══════════ */
+function CollapseExplanationPanel({ region }) {
+  const expl = region.collapse_explanation;
+  if (!expl) return null;
+  const factors = expl.factors || [];
+
+  if (region.collapsed) {
+    return (
+      <div className="explain-panel explain-collapsed">
+        <div className="explain-header">
+          <span className="explain-q">Why did this region collapse?</span>
+        </div>
+        {expl.primary_reason && (
+          <div className="explain-primary">{expl.primary_reason}</div>
+        )}
+        {factors.length > 0 && (
+          <div className="explain-factors">
+            {factors.slice(0, 3).map((f, i) => <FactorBar key={i} factor={f} />)}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Alive but stressed
+  const hasStress = expl.collapse_risk > 0.15 || expl.survival_reason;
+  if (!hasStress) return null;
+
+  return (
+    <div className="explain-panel explain-alive">
+      {expl.survival_reason && (
+        <>
+          <div className="explain-header">
+            <span className="explain-q alive-q">🟢 Why still alive?</span>
+          </div>
+          <div className="explain-survival">{expl.survival_reason}</div>
+        </>
+      )}
+      {factors.length > 0 && expl.collapse_risk > 0.25 && (
+        <div className="explain-factors" style={{ marginTop: 6 }}>
+          {factors.slice(0, 2).map((f, i) => <FactorBar key={i} factor={f} />)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ══════════ Collapse Replay ══════════ */
 function CollapseReplay({ allSteps, replayStep, setReplayStep, maxStep, replayData }) {
   const regions = replayData?.regions || [];
   return (
     <section className="chart-section">
-      <h2><span className="icon">🔄</span> World Replay</h2>
+      <h2><span className="icon">🔄</span> World Replay <span style={{ fontSize: "0.7rem", color: "#5A6380", fontWeight: 400, marginLeft: 8 }}>explainable collapse analysis</span></h2>
       <div className="replay-controls">
-        <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Step {replayStep}</span>
+        <span style={{ fontSize: "0.8rem", color: "#A8B2D1" }}>Step {replayStep}</span>
         <input type="range" min={0} max={Math.max(0, allSteps.length - 1)} value={replayStep} onChange={e => setReplayStep(+e.target.value)} />
-        <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{maxStep}</span>
+        <span style={{ fontSize: "0.8rem", color: "#5A6380" }}>{maxStep}</span>
       </div>
       <div className="replay-grid">
         {regions.map(r => (
           <div key={r.id} className={`replay-card ${r.collapsed ? "collapsed" : "alive"}`}>
             <div className="replay-id">Region {r.id}</div>
             <div className="replay-status">{r.collapsed ? "💀" : "🌍"}</div>
+            <RiskMeter explanation={r.collapse_explanation} />
             <div className="replay-stats">
               <span>W:{r.water}</span><span>F:{r.food}</span>
               <span>E:{r.energy}</span><span>L:{r.land}</span>
               <span>Pop:{r.population}</span><span>S:{r.sustainability}</span>
               <span>Act:{r.last_action}</span>
             </div>
+            <CollapseExplanationPanel region={r} />
           </div>
         ))}
       </div>
@@ -561,7 +728,7 @@ function ResilienceTable({ analysis }) {
               <td style={{ fontWeight: 600 }}>Region {r.region}</td>
               <td>{(r.survival * 100).toFixed(0)}%</td>
               <td>{r.avg_sustainability}</td>
-              <td style={{ color: "#6366f1", fontWeight: 600 }}>{r.resilience_score}</td>
+              <td style={{ color: "#9B6CFF", fontWeight: 600 }}>{r.resilience_score}</td>
             </tr>
           ))}
         </tbody>
@@ -579,7 +746,7 @@ function TradeDependency({ analysis, numRegions }) {
       <h2><span className="icon">📦</span> Trade Dependency</h2>
       <Plot
         data={[
-          { x: labels, y: labels.map((_, i) => dep[i]?.sent || 0), name: "Sent", type: "bar", marker: { color: "#6366f1" } },
+          { x: labels, y: labels.map((_, i) => dep[i]?.sent || 0), name: "Sent", type: "bar", marker: { color: "#7B5CFF" } },
           { x: labels, y: labels.map((_, i) => dep[i]?.received || 0), name: "Received", type: "bar", marker: { color: "#06b6d4" } },
         ]}
         layout={plotLayout("", { barmode: "group", height: 260, margin: { l: 40, r: 20, t: 10, b: 40 } })}

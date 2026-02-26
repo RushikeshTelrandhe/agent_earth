@@ -17,6 +17,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 from analysis.analyzer import SimulationAnalyzer
+from analysis.collapse_explainer import enrich_steps
 from simulation.simulator import Simulator
 from utils.config import PRESETS, WorldPreset, DEFAULT_TIMESTEPS
 from utils.logger import SimulationLogger
@@ -85,10 +86,13 @@ def create_app(static_folder: str | None = None) -> Flask:
         analyzer = SimulationAnalyzer(sim.logger.steps, num_regions=sim.env.num_regions)
         report = analyzer.full_report()
 
+        # Enrich steps with collapse explanations
+        enriched_steps = enrich_steps(sim.logger.steps)
+
         return jsonify({
             "summary": result,
             "analysis": report,
-            "steps": sim.logger.steps,
+            "steps": enriched_steps,
         })
 
     @app.route("/api/results", methods=["GET"])
@@ -106,9 +110,10 @@ def create_app(static_folder: str | None = None) -> Flask:
             return jsonify({"error": "not found"}), 404
         logger = SimulationLogger.load_json(path)
         analyzer = SimulationAnalyzer(logger.steps)
+        enriched_steps = enrich_steps(logger.steps)
         return jsonify({
             "metadata": logger.metadata,
-            "steps": logger.steps,
+            "steps": enriched_steps,
             "analysis": analyzer.full_report(),
         })
 

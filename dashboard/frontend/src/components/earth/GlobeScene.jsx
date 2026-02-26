@@ -337,6 +337,7 @@ export default function GlobeScene({ stepData = {}, allSteps = [], replayStep = 
                 <span><span style={{ color: '#ef4444' }}>●</span> Hoard</span>
                 <span><span style={{ color: '#3b82f6' }}>●</span> Conserve</span>
                 <span><span style={{ color: '#f59e0b' }}>●</span> Invest</span>
+                <span><span style={{ color: '#a855f7' }}>●</span> Expand Pop</span>
             </div>
         </div>
     );
