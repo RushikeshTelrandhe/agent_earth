@@ -1,8 +1,8 @@
 """
-Agent Earth — Simulation Runner
+Agent Earth - Simulation Runner
 ==================================
-Orchestrates the environment, agent, and logger for a full
-simulation run (either with a trained policy or random actions).
+Orchestrates the environment, agents, and logger for a full
+simulation run. Supports both shared and independent agent modes.
 """
 
 from __future__ import annotations
@@ -11,9 +11,8 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from agents.shared_agent import SharedAgent
 from env.world_env import WorldEnv
-from utils.config import DEFAULT_TIMESTEPS, PRESETS, WorldPreset
+from utils.config import DEFAULT_TIMESTEPS, PRESETS, WorldPreset, NUM_ACTIONS, RESOURCE_NAMES, TRADE_AMOUNT_BUCKETS
 from utils.logger import SimulationLogger
 
 
@@ -27,11 +26,13 @@ class Simulator:
     max_steps : int
         Number of timesteps per episode.
     model_path : str | None
-        Path to a pretrained PPO model.  If ``None`` uses random actions.
+        Path to a pretrained PPO model (shared mode) or model directory (independent mode).
     output_dir : str
         Directory for result files.
     climate_severity : float
         Override climate severity (1.0 = default).
+    mode : str
+        "independent" for multi-agent, "shared" for legacy single-policy.
     """
 
     def __init__(
@@ -41,10 +42,12 @@ class Simulator:
         model_path: Optional[str] = None,
         output_dir: str = "results",
         climate_severity: float = 1.0,
+        mode: str = "independent",
     ) -> None:
         self.preset = preset or PRESETS["default"]
         self.max_steps = max_steps
         self.output_dir = output_dir
+        self.mode = mode
 
         # Build environment
         self.env = WorldEnv(
@@ -53,10 +56,17 @@ class Simulator:
             climate_severity=climate_severity,
         )
 
-        # Build or load agent
-        self.agent: Optional[SharedAgent] = None
+        # Build or load agents
+        self.agent = None
         self.model_path = model_path
-        if model_path:
+
+        if mode == "independent":
+            from agents.independent_agents import IndependentAgentManager
+            self.agent = IndependentAgentManager(self.env, num_regions=self.env.num_regions)
+            if model_path:
+                self.agent.load(model_path)
+        elif mode == "shared" and model_path:
+            from agents.shared_agent import SharedAgent
             self.agent = SharedAgent(self.env, model_path=model_path)
 
         # Logger
@@ -67,7 +77,7 @@ class Simulator:
 
         Returns
         -------
-        dict with keys: metadata, steps (list), json_path, csv_path
+        dict with keys: metadata, steps, json_path, csv_path
         """
         self.logger.clear()
         self.logger.set_metadata(
@@ -75,6 +85,7 @@ class Simulator:
             max_steps=self.max_steps,
             climate_severity=self.env.climate_severity,
             num_regions=self.env.num_regions,
+            mode=self.mode,
         )
 
         obs, info = self.env.reset()
@@ -85,16 +96,41 @@ class Simulator:
         step = 0
 
         while not done:
-            # Choose action
-            if self.agent:
+            if self.mode == "independent" and self.agent is not None:
+                # Multi-agent: get per-agent observations and actions
+                agent_obs = {i: self.env._get_agent_obs(i) for i in range(self.env.num_regions)}
+                actions = self.agent.predict(agent_obs)
+                obs_dict, rewards_dict, terminated, truncated, info = self.env.step_multi(actions)
+                reward = sum(rewards_dict.values())
+                done = terminated or truncated
+            elif self.mode == "shared" and self.agent is not None:
                 action = self.agent.predict(obs)
+                obs, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
             else:
-                action = self.env.action_space.sample()
+                # Random actions
+                if self.mode == "independent":
+                    actions = {
+                        i: np.array([
+                            self.env.np_random.integers(NUM_ACTIONS),
+                            self.env.np_random.integers(self.env.num_regions),
+                            self.env.np_random.integers(len(RESOURCE_NAMES)),
+                            self.env.np_random.integers(TRADE_AMOUNT_BUCKETS),
+                        ]) for i in range(self.env.num_regions)
+                    }
+                    obs_dict, rewards_dict, terminated, truncated, info = self.env.step_multi(actions)
+                    reward = sum(rewards_dict.values())
+                else:
+                    action = self.env.action_space.sample()
+                    obs, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
 
-            obs, reward, terminated, truncated, info = self.env.step(action)
-            done = terminated or truncated
             total_reward += reward
             step += 1
+
+            # Enrich info with per-region rewards and trust
+            if self.mode == "independent":
+                info["per_region_rewards"] = self.env.per_region_rewards
 
             self.logger.log_step(step, info)
 
