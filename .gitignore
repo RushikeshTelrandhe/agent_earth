@@ -1,0 +1,131 @@
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# PYTHON
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# =========================
+# ENV / SECRETS
+# =========================
+.env
+.env.*
+*.env
+
+# =========================
+# LOGS
+# =========================
+logs/
+*.log
+
+# =========================
+# MODELS (IMPORTANT)
+# =========================
+models/
+*.pt
+*.pth
+*.ckpt
+*.zip
+*.onnx
+
+# If you want to keep structure:
+# !models/.gitkeep
+
+# =========================
+# SIMULATION OUTPUTS
+# =========================
+results/
+outputs/
+runs/
+*.jsonl
+
+# Optional: keep example results
+# !results/sample/
+
+# =========================
+# DATASETS
+# =========================
+data/
+datasets/
+*.csv
+*.parquet
+*.h5
+
+# =========================
+# CACHE
+# =========================
+.cache/
+*.cache
+
+# =========================
+# TEST ARTIFACTS
+# =========================
+coverage/
+htmlcov/
+.pytest_cache/
+
+# =========================
+# IDE FILES
+# =========================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =========================
+# REACT / FRONTEND
+# =========================
+dashboard/frontend/node_modules/
+dashboard/frontend/dist/
+dashboard/frontend/.vite/
+dashboard/frontend/.next/
+dashboard/frontend/build/
+
+# npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# VITE ENV FILES
+# =========================
+dashboard/frontend/.env
+dashboard/frontend/.env.local
+dashboard/frontend/.env.*.local
+
+# =========================
+# FLASK
+# =========================
+instance/
+*.sqlite3
+
+# =========================
+# MISC
+# =========================
+*.bak
+*.tmp
+*.swp

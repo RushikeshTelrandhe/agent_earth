@@ -89,10 +89,10 @@ class SharedAgent:
         """Save model weights to disk."""
         os.makedirs(os.path.dirname(path) or "models", exist_ok=True)
         self.model.save(path)
-        print(f"  Model saved → {path}")
+        print(f"  Model saved -> {path}")
         return path
 
     def load(self, path: str) -> None:
         """Load model weights from disk."""
         self.model = PPO.load(path, env=self.env)
-        print(f"  Model loaded ← {path}")
+        print(f"  Model loaded <- {path}")

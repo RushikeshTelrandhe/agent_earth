@@ -88,7 +88,7 @@ class SimulationLogger:
         path = os.path.join(self.output_dir, filename)
         with open(path, "w", encoding="utf-8") as f:
             f.write("=" * 60 + "\n")
-            f.write("  Agent Earth — Simulation Insights\n")
+            f.write("  Agent Earth - Simulation Insights\n")
             f.write("=" * 60 + "\n\n")
             for key, value in insights.items():
                 f.write(f"  {key}: {value}\n")

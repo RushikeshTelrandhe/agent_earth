@@ -111,6 +111,6 @@ class Simulator:
             "json_path": json_path,
             "csv_path": csv_path,
         }
-        print(f"\n  Simulation complete — {step} steps, reward={total_reward:.2f}")
-        print(f"  Results → {json_path}")
+        print(f"\n  Simulation complete - {step} steps, reward={total_reward:.2f}")
+        print(f"  Results -> {json_path}")
         return summary

@@ -59,7 +59,7 @@ def cmd_analyse(args: argparse.Namespace) -> None:
     report = analyzer.full_report()
 
     print("\n" + "=" * 60)
-    print("  Agent Earth — Analysis Report")
+    print("  Agent Earth - Analysis Report")
     print("=" * 60)
     for key, value in report.items():
         print(f"\n  {key}:")
@@ -74,7 +74,7 @@ def cmd_analyse(args: argparse.Namespace) -> None:
         {k: str(v) for k, v in report.items()},
         filename="analysis_insights.txt",
     )
-    print(f"\n  Insights saved → {args.input.rsplit('.', 1)[0]}_insights.txt")
+    print(f"\n  Insights saved -> {args.input.rsplit('.', 1)[0]}_insights.txt")
 
 
 def cmd_dashboard(args: argparse.Namespace) -> None:
