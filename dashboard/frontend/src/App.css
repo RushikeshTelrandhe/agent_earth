@@ -83,6 +83,44 @@ body {
   font-weight: 300;
 }
 
+/* ── Tab Navigation ────────────────────── */
+.tab-nav {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.tab-btn {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: 'Inter', sans-serif;
+}
+
+.tab-btn:hover:not(:disabled) {
+  color: var(--text-primary);
+  border-color: var(--border-glow);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(6, 182, 212, 0.1));
+  color: var(--text-primary);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+.tab-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ── Controls ──────────────────────────── */
 .controls-section {
   background: var(--bg-glass);

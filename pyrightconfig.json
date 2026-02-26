@@ -1,0 +1,9 @@
+{
+    "venvPath": ".",
+    "venv": ".venv",
+    "extraPaths": [
+        "."
+    ],
+    "reportMissingImports": true,
+    "pythonVersion": "3.13"
+}

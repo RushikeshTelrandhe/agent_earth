@@ -4,11 +4,22 @@
  * Trade network, agent cards, trust heatmap, strategy timeline,
  * alliance graph, climate response, and cluster visualizations.
  */
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react";
 import Plot from "react-plotly.js";
 import "./App.css";
 
+// Lazy-load the 3D globe
+const GlobeScene = lazy(() => import("./components/earth/GlobeScene"));
+import WebGLErrorBoundary from "./components/earth/WebGLErrorBoundary";
+
 const API = "/api";
+
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch { return false; }
+}
 
 /* ── Helpers ──────────────────────────── */
 const COLORS = ["#6366f1", "#06b6d4", "#22c55e", "#f59e0b", "#f43f5e", "#a855f7"];
@@ -40,6 +51,9 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [savedRuns, setSavedRuns] = useState([]);
   const [replayStep, setReplayStep] = useState(0);
+  const [activeTab, setActiveTab] = useState("analytics");
+  const [safeMode, setSafeMode] = useState(false);
+  const [globeLoaded, setGlobeLoaded] = useState(false);
 
   const fetchRuns = useCallback(() => {
     fetch(`${API}/results`).then(r => r.json()).then(d => setSavedRuns(d.files || [])).catch(() => { });
@@ -89,6 +103,16 @@ export default function App() {
         <h1>Agent Earth</h1>
         <p className="subtitle">Adaptive Multi-Agent Resource Scarcity Simulator</p>
       </header>
+
+      {/* ── Tab Navigation ─── */}
+      <nav className="tab-nav">
+        <button className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
+          📊 Analytics
+        </button>
+        <button className={`tab-btn ${activeTab === 'globe' ? 'active' : ''}`} onClick={() => { setActiveTab('globe'); setGlobeLoaded(true); }} disabled={!hasWebGL()}>
+          🌍 Holographic Earth
+        </button>
+      </nav>
 
       {/* ── Controls ─── */}
       <section className="controls-section">
@@ -140,32 +164,67 @@ export default function App() {
             </div>
           )}
 
-          {/* ── Agent Behavior Cards ─── */}
-          <AgentCards replayData={replayData} analysis={analysis} />
+          {/* ── Globe Tab (persistent mount — hidden via CSS, never unmounted) ─── */}
+          {globeLoaded && (
+            <div style={{ display: activeTab === 'globe' ? 'block' : 'none' }}>
+              <section className="chart-section">
+                <h2>
+                  <span className="icon">🌍</span> Holographic Earth
+                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 400, marginLeft: 8 }}>node size=pop, color=strategy, arcs=trade</span>
+                  <button
+                    onClick={() => setSafeMode(m => !m)}
+                    style={{
+                      marginLeft: 12, padding: '2px 10px', fontSize: '0.65rem',
+                      borderRadius: 6, border: '1px solid rgba(148,163,184,0.2)',
+                      background: safeMode ? 'rgba(34,197,94,0.15)' : 'transparent',
+                      color: safeMode ? '#22c55e' : '#64748b', cursor: 'pointer',
+                      fontFamily: 'Inter,sans-serif', verticalAlign: 'middle',
+                    }}
+                  >
+                    {safeMode ? '🛡️ Safe Mode ON' : '🛡️ Safe Mode'}
+                  </button>
+                </h2>
+                <WebGLErrorBoundary height={600} onFallback={() => setActiveTab('analytics')}>
+                  <Suspense fallback={<div style={{ height: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>Loading 3D Engine...</div>}>
+                    <GlobeScene stepData={replayData} allSteps={allSteps} replayStep={replayStep} safeMode={safeMode} />
+                  </Suspense>
+                </WebGLErrorBoundary>
+              </section>
+              <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
+            </div>
+          )}
 
-          {/* ── Trade Network ─── */}
-          <TradeNetwork allSteps={allSteps} numRegions={numRegions} replayStep={replayStep} />
+          {/* ── Analytics Tab ─── */}
+          {activeTab === 'analytics' && (
+            <>
+              {/* ── Agent Behavior Cards ─── */}
+              <AgentCards replayData={replayData} analysis={analysis} />
 
-          {/* ── Strategy Evolution Timeline ─── */}
-          <StrategyTimeline analysis={analysis} allSteps={allSteps} numRegions={numRegions} />
+              {/* ── Trade Network ─── */}
+              <TradeNetwork allSteps={allSteps} numRegions={numRegions} replayStep={replayStep} />
 
-          {/* ── Resource Time Series + Trust Heatmap ─── */}
-          <div className="chart-grid" style={{ marginBottom: 22 }}>
-            <ResourceTimeSeries allSteps={allSteps} numRegions={numRegions} />
-            <TrustHeatmap allSteps={allSteps} replayStep={replayStep} numRegions={numRegions} />
-          </div>
+              {/* ── Strategy Evolution Timeline ─── */}
+              <StrategyTimeline analysis={analysis} allSteps={allSteps} numRegions={numRegions} />
 
-          {/* ── Collapse Replay ─── */}
-          <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
+              {/* ── Resource Time Series + Trust Heatmap ─── */}
+              <div className="chart-grid" style={{ marginBottom: 22 }}>
+                <ResourceTimeSeries allSteps={allSteps} numRegions={numRegions} />
+                <TrustHeatmap allSteps={allSteps} replayStep={replayStep} numRegions={numRegions} />
+              </div>
 
-          {/* ── Climate Resilience + Trade Dependency ─── */}
-          <div className="chart-grid" style={{ marginBottom: 22 }}>
-            <ResilienceTable analysis={analysis} />
-            <TradeDependency analysis={analysis} numRegions={numRegions} />
-          </div>
+              {/* ── Collapse Replay ─── */}
+              <CollapseReplay allSteps={allSteps} replayStep={replayStep} setReplayStep={setReplayStep} maxStep={maxStep} replayData={replayData} />
 
-          {/* ── Clusters ─── */}
-          <Clusters analysis={analysis} />
+              {/* ── Climate Resilience + Trade Dependency ─── */}
+              <div className="chart-grid" style={{ marginBottom: 22 }}>
+                <ResilienceTable analysis={analysis} />
+                <TradeDependency analysis={analysis} numRegions={numRegions} />
+              </div>
+
+              {/* ── Clusters ─── */}
+              <Clusters analysis={analysis} />
+            </>
+          )}
         </>
       )}
 
