@@ -4,13 +4,16 @@
  * Trade network, agent cards, trust heatmap, strategy timeline,
  * alliance graph, climate response, and cluster visualizations.
  */
-import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, lazy, Suspense } from "react";
 import Plot from "react-plotly.js";
 import "./App.css";
 
 // Lazy-load the 3D globe
 const GlobeScene = lazy(() => import("./components/earth/GlobeScene"));
 import WebGLErrorBoundary from "./components/earth/WebGLErrorBoundary";
+
+// Lazy-load Crowdsense panel
+const CrowdsensePanel = lazy(() => import("./components/crowdsense/CrowdsensePanel"));
 
 const API = "/api";
 
@@ -66,6 +69,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("analytics");
   const [safeMode, setSafeMode] = useState(false);
   const [globeLoaded, setGlobeLoaded] = useState(false);
+  const [advisorOpen, setAdvisorOpen] = useState(false);
 
   const fetchRuns = useCallback(() => {
     fetch(`${API}/results`).then(r => r.json()).then(d => setSavedRuns(d.files || [])).catch(() => { });
@@ -194,6 +198,9 @@ export default function App() {
           <button className={`tab-btn ${activeTab === 'globe' ? 'active' : ''}`} onClick={() => { setActiveTab('globe'); setGlobeLoaded(true); }} disabled={!hasWebGL()}>
             🌍 Holographic Earth
           </button>
+          <button className={`tab-btn ${activeTab === 'crowdsense' ? 'active' : ''}`} onClick={() => setActiveTab('crowdsense')}>
+            🛠️ Crowdsense
+          </button>
         </nav>
 
         {/* ── Controls ─── */}
@@ -307,9 +314,23 @@ export default function App() {
                 <Clusters analysis={analysis} />
               </>
             )}
+
+            {/* ── Crowdsense Tab ─── */}
+            {activeTab === 'crowdsense' && (
+              <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', color: '#5A6380' }}>Loading Crowdsense...</div>}>
+                <CrowdsensePanel />
+              </Suspense>
+            )}
           </>
         )}
       </div>
+
+      <AdvisorPanel
+        open={advisorOpen}
+        onToggle={() => setAdvisorOpen(o => !o)}
+        steps={allSteps}
+        analysis={analysis}
+      />
 
       <footer className="footer">Agent Earth — Autonomous Intelligence Platform</footer>
     </div>
@@ -772,5 +793,106 @@ function Clusters({ analysis }) {
         ))}
       </div>
     </section>
+  );
+}
+
+/* ══════════ RL Advisor Panel ══════════ */
+const ADVISOR_QUICK = [
+  "Overview",
+  "Why did regions collapse?",
+  "Which strategy works best?",
+  "Are agents cooperating?",
+  "Training convergence?",
+  "Risk outlook",
+];
+
+function AdvisorPanel({ open, onToggle, steps, analysis }) {
+  const [messages, setMessages] = useState([
+    { role: "assistant", text: "AgentEarth RL Advisor ready. Ask me about simulation outcomes, collapse reasons, strategy effectiveness, or training convergence." },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages]);
+
+  const ask = async (question) => {
+    if (!question.trim()) return;
+    setMessages(prev => [...prev, { role: "user", text: question }]);
+    setInput("");
+    setLoading(true);
+    try {
+      const resp = await fetch(`${API}/advisor`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, steps: steps || [], analysis: analysis || {} }),
+      });
+      const data = await resp.json();
+      setMessages(prev => [...prev, { role: "assistant", text: data.response, confidence: data.confidence }]);
+    } catch (e) {
+      setMessages(prev => [...prev, { role: "assistant", text: "Unable to reach the advisor service. Please ensure the backend is running." }]);
+    }
+    setLoading(false);
+  };
+
+  const handleSubmit = (e) => { e.preventDefault(); ask(input); };
+
+  return (
+    <>
+      {/* FAB Toggle */}
+      <button className="advisor-fab" onClick={onToggle} title="AgentEarth RL Advisor">
+        {open ? "✕" : "🧠"}
+      </button>
+
+      {/* Panel */}
+      {open && (
+        <div className="advisor-panel">
+          <div className="advisor-header">
+            <div className="advisor-title">
+              <span className="advisor-dot" />
+              AgentEarth RL Advisor
+            </div>
+            <span className="advisor-badge">Simulation Analyst</span>
+          </div>
+
+          <div className="advisor-messages" ref={scrollRef}>
+            {messages.map((m, i) => (
+              <div key={i} className={`advisor-msg advisor-msg-${m.role}`}>
+                <div className="advisor-msg-text">{m.text}</div>
+                {m.confidence && (
+                  <div className="advisor-confidence">Confidence: {m.confidence}</div>
+                )}
+              </div>
+            ))}
+            {loading && (
+              <div className="advisor-msg advisor-msg-assistant">
+                <div className="advisor-msg-text advisor-typing">
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="advisor-quick">
+            {ADVISOR_QUICK.map(q => (
+              <button key={q} onClick={() => ask(q)} disabled={loading}>{q}</button>
+            ))}
+          </div>
+
+          <form className="advisor-input" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Ask about simulation results..."
+              disabled={loading}
+            />
+            <button type="submit" disabled={loading || !input.trim()}>→</button>
+          </form>
+        </div>
+      )}
+    </>
   );
 }

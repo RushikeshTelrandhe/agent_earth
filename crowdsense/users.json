@@ -1,0 +1,20 @@
+[
+  {
+    "id": "0a17d69e",
+    "name": "xyz",
+    "email": "xyz@gmail.com",
+    "password": "$2b$12$yJMsuyWvsZzieUgkhGyNDuyY1DQm23YiryCJcqy3whcqeTPgbosK6",
+    "region_id": 0,
+    "region_name": "Nagpur",
+    "created_at": 1772136371.656029
+  },
+  {
+    "id": "9ce56be3",
+    "name": "abc",
+    "email": "abc@gmail.com",
+    "password": "$2b$12$lrGJXhipVUJeR2aEa3sW2O3Ub6mUs2pwjG6HAICrAb.D1fFHFJE8i",
+    "region_id": 1,
+    "region_name": "Region 1",
+    "created_at": 1772137843.7865624
+  }
+]

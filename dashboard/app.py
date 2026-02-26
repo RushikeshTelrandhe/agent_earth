@@ -18,6 +18,7 @@ from flask_cors import CORS
 
 from analysis.analyzer import SimulationAnalyzer
 from analysis.collapse_explainer import enrich_steps
+from analysis.rl_advisor import generate_response as advisor_respond
 from simulation.simulator import Simulator
 from utils.config import PRESETS, WorldPreset, DEFAULT_TIMESTEPS
 from utils.logger import SimulationLogger
@@ -35,6 +36,10 @@ def create_app(static_folder: str | None = None) -> Flask:
         static_url_path="",
     )
     CORS(app)
+
+    # Register crowdsense pilot layer
+    from crowdsense.routes import crowdsense_bp
+    app.register_blueprint(crowdsense_bp)
 
     # ── API Routes ─────────────────────────────
 
@@ -116,6 +121,15 @@ def create_app(static_folder: str | None = None) -> Flask:
             "steps": enriched_steps,
             "analysis": analyzer.full_report(),
         })
+    @app.route("/api/advisor", methods=["POST"])
+    def advisor():
+        data = request.get_json(silent=True) or {}
+        question = data.get("question", "Give me an overview")
+        sim_steps = data.get("steps", [])
+        sim_analysis = data.get("analysis", {})
+
+        result = advisor_respond(question, sim_steps, sim_analysis)
+        return jsonify(result)
 
     # ── Serve React SPA ────────────────────────
     @app.route("/", defaults={"path": ""})
