@@ -113,23 +113,6 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* ═══ FLOATING GLASS NAVBAR ═══ */}
-      <nav className="navbar">
-        <div className="navbar-logo">
-          <span className="logo-glyph">AE</span>
-          <span>AgentEarth</span>
-        </div>
-        <div className="navbar-links">
-          <button className={`nav-link ${!data ? 'active' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</button>
-          <button className={`nav-link ${data ? 'active' : ''}`} onClick={scrollToDashboard}>Simulation</button>
-          <button className="nav-link" onClick={scrollToDashboard}>Ecosystem</button>
-          <button className="nav-link" onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}>Technology</button>
-          <button className="nav-link" onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}>Research</button>
-        </div>
-        <button className="navbar-cta" onClick={runSim} disabled={loading}>
-          {loading ? "Running..." : "Launch Simulation"}
-        </button>
-      </nav>
 
       {/* ═══ HERO SECTION ═══ */}
       <section className="hero">
@@ -251,7 +234,15 @@ export default function App() {
             {/* ── Insights ─── */}
             {analysis.insights && (
               <div className="insights-banner">
-                <strong>AI Insights: </strong>{analysis.insights}
+                <strong>AI Insights</strong>
+                <ul className="insights-list">
+                  {analysis.insights
+                    .split(/\.\s*/)
+                    .filter(s => s.trim().length > 0)
+                    .map((point, i) => (
+                      <li key={i}>{point.trim()}.</li>
+                    ))}
+                </ul>
               </div>
             )}
 

@@ -882,6 +882,39 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 .insights-banner strong {
   color: var(--accent-light);
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  letter-spacing: 0.3px;
+}
+
+.insights-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insights-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.insights-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
 /* ═══════════════════════════════════════════════════════
