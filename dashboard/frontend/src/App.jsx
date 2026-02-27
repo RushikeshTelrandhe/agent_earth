@@ -39,11 +39,11 @@ const plotLayout = (title, extra = {}) => ({
 });
 
 const FEATURES = [
-  { icon: "🧠", title: "Multi-Agent RL", desc: "Independent PPO agents learn adaptive strategies through reinforcement learning in a shared environment." },
-  { icon: "🌐", title: "Emergent Trade", desc: "Agents discover trade partnerships, build trust, and form alliances without explicit programming." },
-  { icon: "🌡️", title: "Climate Dynamics", desc: "Stochastic disasters with per-region vulnerability drive behavioral divergence across populations." },
-  { icon: "📊", title: "Real-time Analytics", desc: "Survival rates, Gini inequality, strategy evolution, and behavioral clustering — all in real time." },
-  { icon: "🔬", title: "Research Grade", desc: "Designed for reproducible experiments with configurable presets, seed control, and detailed logging." },
+  { icon: "RL", title: "Multi-Agent RL", desc: "Independent PPO agents learn adaptive strategies through reinforcement learning in a shared environment." },
+  { icon: "NET", title: "Emergent Trade", desc: "Agents discover trade partnerships, build trust, and form alliances without explicit programming." },
+  { icon: "CLI", title: "Climate Dynamics", desc: "Stochastic disasters with per-region vulnerability drive behavioral divergence across populations." },
+  { icon: "ANL", title: "Real-time Analytics", desc: "Survival rates, Gini inequality, strategy evolution, and behavioral clustering — all in real time." },
+  { icon: "SCI", title: "Research Grade", desc: "Designed for reproducible experiments with configurable presets, seed control, and detailed logging." },
 ];
 
 function scrollToDashboard() {
@@ -116,7 +116,7 @@ export default function App() {
       {/* ═══ FLOATING GLASS NAVBAR ═══ */}
       <nav className="navbar">
         <div className="navbar-logo">
-          <span className="logo-glyph">🌍</span>
+          <span className="logo-glyph">AE</span>
           <span>AgentEarth</span>
         </div>
         <div className="navbar-links">
@@ -134,18 +134,20 @@ export default function App() {
       {/* ═══ HERO SECTION ═══ */}
       <section className="hero">
         <div className="hero-glow" />
-        <div className="hero-badge">🌍 Autonomous Planet Intelligence</div>
+        <div className="hero-earth-anim">
+          <div className="hero-earth-sphere">
+            <div className="hero-earth-ring hero-earth-ring-1" />
+            <div className="hero-earth-ring hero-earth-ring-2" />
+            <div className="hero-earth-ring hero-earth-ring-3" />
+            <div className="hero-earth-core" />
+          </div>
+        </div>
+        <div className="hero-badge">Autonomous Planet Intelligence</div>
         <h1>Simulate Earth Using Adaptive AI Agents</h1>
         <p className="hero-sub">
           Watch autonomous agents learn to trade, cooperate, and survive under climate pressure.
           A research-grade multi-agent reinforcement learning simulator.
         </p>
-        <div className="hero-buttons">
-          <button className="btn-primary" onClick={runSim} disabled={loading}>
-            {loading ? "Simulating..." : "Run Simulation"}
-          </button>
-          <button className="btn-secondary" onClick={scrollToDashboard}>Explore Dashboard</button>
-        </div>
       </section>
 
       {/* ═══ TECH STRIP ═══ */}
@@ -193,13 +195,13 @@ export default function App() {
         {/* ── Tab Navigation ─── */}
         <nav className="tab-nav">
           <button className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
-            📊 Analytics
+            Analytics
           </button>
           <button className={`tab-btn ${activeTab === 'globe' ? 'active' : ''}`} onClick={() => { setActiveTab('globe'); setGlobeLoaded(true); }} disabled={!hasWebGL()}>
-            🌍 Holographic Earth
+            Holographic Earth
           </button>
           <button className={`tab-btn ${activeTab === 'crowdsense' ? 'active' : ''}`} onClick={() => setActiveTab('crowdsense')}>
-            🛠️ Crowdsense
+            Crowdsense
           </button>
         </nav>
 
@@ -258,7 +260,7 @@ export default function App() {
               <div style={{ display: activeTab === 'globe' ? 'block' : 'none' }}>
                 <section className="chart-section">
                   <h2>
-                    <span className="icon">🌍</span> Holographic Earth
+                    <span className="icon">◉</span> Holographic Earth
                     <span style={{ fontSize: '0.7rem', color: '#5A6380', fontWeight: 400, marginLeft: 8 }}>node size=pop, color=strategy, arcs=trade</span>
                     <button
                       onClick={() => setSafeMode(m => !m)}
@@ -270,7 +272,7 @@ export default function App() {
                         fontFamily: 'Inter,sans-serif', verticalAlign: 'middle',
                       }}
                     >
-                      {safeMode ? '🛡️ Safe Mode ON' : '🛡️ Safe Mode'}
+                      {safeMode ? 'Safe Mode ON' : 'Safe Mode'}
                     </button>
                   </h2>
                   <WebGLErrorBoundary height={600} onFallback={() => setActiveTab('analytics')}>
@@ -347,12 +349,12 @@ function SummaryCards({ summary, analysis }) {
   return (
     <section className="summary-section">
       <div className="cards">
-        <div className="card"><div className="card-icon">⚡</div><div className="card-value">{summary.steps_completed || 0}</div><div className="card-label">Steps</div></div>
-        <div className="card"><div className="card-icon">🏆</div><div className="card-value">{summary.total_reward || 0}</div><div className="card-label">Total Reward</div></div>
-        <div className="card"><div className="card-icon">🌍</div><div className="card-value">{survived}/{total}</div><div className="card-label">Survived</div></div>
-        <div className="card"><div className="card-icon">💀</div><div className="card-value" style={{ color: collapses.length ? "#ef4444" : "#22c55e" }}>{collapses.length}</div><div className="card-label">Collapses</div></div>
-        <div className="card"><div className="card-icon">🤝</div><div className="card-value">{((coop.cooperation_ratio || 0) * 100).toFixed(0)}%</div><div className="card-label">Cooperation</div></div>
-        <div className="card"><div className="card-icon">📊</div><div className="card-value">{analysis.inequality_mean || 0}</div><div className="card-label">Gini Index</div></div>
+        <div className="card"><div className="card-icon">STP</div><div className="card-value">{summary.steps_completed || 0}</div><div className="card-label">Steps</div></div>
+        <div className="card"><div className="card-icon">RWD</div><div className="card-value">{summary.total_reward || 0}</div><div className="card-label">Total Reward</div></div>
+        <div className="card"><div className="card-icon">SRV</div><div className="card-value">{survived}/{total}</div><div className="card-label">Survived</div></div>
+        <div className="card"><div className="card-icon">COL</div><div className="card-value" style={{ color: collapses.length ? "#ef4444" : "#22c55e" }}>{collapses.length}</div><div className="card-label">Collapses</div></div>
+        <div className="card"><div className="card-icon">COP</div><div className="card-value">{((coop.cooperation_ratio || 0) * 100).toFixed(0)}%</div><div className="card-label">Cooperation</div></div>
+        <div className="card"><div className="card-icon">GNI</div><div className="card-value">{analysis.inequality_mean || 0}</div><div className="card-label">Gini Index</div></div>
       </div>
     </section>
   );
@@ -366,7 +368,7 @@ function AgentCards({ replayData, analysis }) {
 
   return (
     <section className="chart-section">
-      <h2><span className="icon">🤖</span> Agent Behavior</h2>
+      <h2><span className="icon">◈</span> Agent Behavior</h2>
       <div className="agent-cards-grid">
         {regions.map(r => {
           const strat = getStrategyType(dominant[r.id] || r.last_action);
@@ -375,7 +377,7 @@ function AgentCards({ replayData, analysis }) {
           return (
             <div key={r.id} className={`agent-card ${r.collapsed ? "collapsed-card" : ""}`}>
               <div className="agent-card-header">
-                <span className="agent-id">{r.collapsed ? "💀" : "🌐"} Region {r.id}</span>
+                <span className="agent-id">{r.collapsed ? "✖" : "◉"} Region {r.id}</span>
                 <span className={`agent-strategy-badge strategy-${strat}`}>{strat}</span>
               </div>
               <div className="agent-meters">
@@ -467,7 +469,7 @@ function TradeNetwork({ allSteps, numRegions, replayStep }) {
 
   return (
     <section className="chart-section">
-      <h2><span className="icon">🔗</span> Trade Network <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(arrow thickness = volume, color = resource)</span></h2>
+      <h2><span className="icon">⬡</span> Trade Network <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(arrow thickness = volume, color = resource)</span></h2>
       <Plot
         data={traces}
         layout={plotLayout("", {
@@ -532,7 +534,7 @@ function StrategyTimeline({ analysis, allSteps, numRegions }) {
 
   return (
     <section className="chart-section">
-      <h2><span className="icon">📈</span> Strategy Evolution <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(action % over time | R0, R1, R2)</span></h2>
+      <h2><span className="icon">△</span> Strategy Evolution <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(action % over time | R0, R1, R2)</span></h2>
       <Plot
         data={traces}
         layout={{
@@ -575,7 +577,7 @@ function ResourceTimeSeries({ allSteps, numRegions }) {
   }
   return (
     <section className="chart-section">
-      <h2><span className="icon">📊</span> Resources Over Time</h2>
+      <h2><span className="icon">▦</span> Resources Over Time</h2>
       <Plot data={traces} layout={plotLayout("", { height: 320, margin: { l: 50, r: 20, t: 10, b: 40 } })} config={{ displayModeBar: false }} style={{ width: "100%" }} />
     </section>
   );
@@ -589,7 +591,7 @@ function TrustHeatmap({ allSteps, replayStep, numRegions }) {
   if (!trustMatrix || !trustMatrix.length) {
     return (
       <section className="chart-section">
-        <h2><span className="icon">🤝</span> Trust Matrix</h2>
+        <h2><span className="icon">⊞</span> Trust Matrix</h2>
         <p style={{ color: "#64748b", fontSize: "0.85rem" }}>Trust data not available for this run.</p>
       </section>
     );
@@ -598,7 +600,7 @@ function TrustHeatmap({ allSteps, replayStep, numRegions }) {
   const labels = Array.from({ length: numRegions }, (_, i) => `R${i}`);
   return (
     <section className="chart-section">
-      <h2><span className="icon">🤝</span> Trust Matrix <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(step {stepData.step || replayStep})</span></h2>
+      <h2><span className="icon">⊞</span> Trust Matrix <span style={{ fontSize: "0.7rem", color: "#64748b", fontWeight: 400 }}>(step {stepData.step || replayStep})</span></h2>
       <div className="trust-matrix-container">
         <Plot
           data={[{
@@ -688,7 +690,7 @@ function CollapseExplanationPanel({ region }) {
       {expl.survival_reason && (
         <>
           <div className="explain-header">
-            <span className="explain-q alive-q">🟢 Why still alive?</span>
+            <span className="explain-q alive-q">● Why still alive?</span>
           </div>
           <div className="explain-survival">{expl.survival_reason}</div>
         </>
@@ -707,7 +709,7 @@ function CollapseReplay({ allSteps, replayStep, setReplayStep, maxStep, replayDa
   const regions = replayData?.regions || [];
   return (
     <section className="chart-section">
-      <h2><span className="icon">🔄</span> World Replay <span style={{ fontSize: "0.7rem", color: "#5A6380", fontWeight: 400, marginLeft: 8 }}>explainable collapse analysis</span></h2>
+      <h2><span className="icon">↻</span> World Replay <span style={{ fontSize: "0.7rem", color: "#5A6380", fontWeight: 400, marginLeft: 8 }}>explainable collapse analysis</span></h2>
       <div className="replay-controls">
         <span style={{ fontSize: "0.8rem", color: "#A8B2D1" }}>Step {replayStep}</span>
         <input type="range" min={0} max={Math.max(0, allSteps.length - 1)} value={replayStep} onChange={e => setReplayStep(+e.target.value)} />
@@ -717,7 +719,7 @@ function CollapseReplay({ allSteps, replayStep, setReplayStep, maxStep, replayDa
         {regions.map(r => (
           <div key={r.id} className={`replay-card ${r.collapsed ? "collapsed" : "alive"}`}>
             <div className="replay-id">Region {r.id}</div>
-            <div className="replay-status">{r.collapsed ? "💀" : "🌍"}</div>
+            <div className="replay-status">{r.collapsed ? "✖" : "◉"}</div>
             <RiskMeter explanation={r.collapse_explanation} />
             <div className="replay-stats">
               <span>W:{r.water}</span><span>F:{r.food}</span>
@@ -736,10 +738,10 @@ function CollapseReplay({ allSteps, replayStep, setReplayStep, maxStep, replayDa
 /* ══════════ Resilience Table ══════════ */
 function ResilienceTable({ analysis }) {
   const resilience = analysis?.climate_resilience || [];
-  const medals = ["🥇", "🥈", "🥉"];
+  const medals = ["1st", "2nd", "3rd"];
   return (
     <section className="chart-section">
-      <h2><span className="icon">🛡️</span> Climate Resilience Ranking</h2>
+      <h2><span className="icon">◆</span> Climate Resilience Ranking</h2>
       <table className="resilience-table">
         <thead><tr><th>#</th><th>Region</th><th>Survival</th><th>Avg Sustain.</th><th>Score</th></tr></thead>
         <tbody>
@@ -764,7 +766,7 @@ function TradeDependency({ analysis, numRegions }) {
   const labels = Object.keys(dep).map(k => `R${k}`);
   return (
     <section className="chart-section">
-      <h2><span className="icon">📦</span> Trade Dependency</h2>
+      <h2><span className="icon">⬢</span> Trade Dependency</h2>
       <Plot
         data={[
           { x: labels, y: labels.map((_, i) => dep[i]?.sent || 0), name: "Sent", type: "bar", marker: { color: "#7B5CFF" } },
@@ -784,7 +786,7 @@ function Clusters({ analysis }) {
   const labels = clusters.labels || {};
   return (
     <section className="chart-section">
-      <h2><span className="icon">🧬</span> Behavioral Clusters</h2>
+      <h2><span className="icon">⏣</span> Behavioral Clusters</h2>
       <div className="cluster-grid">
         {Object.entries(labels).map(([rid, cid]) => (
           <div key={rid} className={`cluster-badge cluster-${cid % 3}`}>
@@ -843,7 +845,7 @@ function AdvisorPanel({ open, onToggle, steps, analysis }) {
     <>
       {/* FAB Toggle */}
       <button className="advisor-fab" onClick={onToggle} title="AgentEarth RL Advisor">
-        {open ? "✕" : "🧠"}
+        {open ? "✕" : "AI"}
       </button>
 
       {/* Panel */}

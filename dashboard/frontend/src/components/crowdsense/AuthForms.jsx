@@ -56,7 +56,7 @@ export default function AuthForms({ onAuth }) {
         <div className="cs-auth-container">
             <div className="cs-auth-card">
                 <div className="cs-auth-header">
-                    <span className="cs-auth-icon">🛰️</span>
+                    <span className="cs-auth-icon">CS</span>
                     <h3>Agent Earth Crowdsense</h3>
                     <span className="cs-pilot-badge">Pilot Program</span>
                 </div>

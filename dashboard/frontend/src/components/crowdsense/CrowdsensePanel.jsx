@@ -44,7 +44,7 @@ export default function CrowdsensePanel() {
         <div className="cs-panel">
             {/* Pilot Badge */}
             <div className="cs-pilot-banner">
-                <span className="cs-pilot-icon">🛰️</span>
+                <span className="cs-pilot-icon">CS</span>
                 <span>Pilot Deployment — Regional Crowdsensing Layer</span>
                 <span className="cs-pilot-tag">RESEARCH PROTOTYPE</span>
             </div>
@@ -71,7 +71,7 @@ export default function CrowdsensePanel() {
 
             {/* Privacy & Ethics */}
             <div className="cs-privacy-panel">
-                <h5>🔐 Privacy Guarantees</h5>
+                <h5>Privacy Guarantees</h5>
                 <ul>
                     <li>No video storage — all processing is on-device</li>
                     <li>Metadata-only ingestion — class labels and confidence scores</li>

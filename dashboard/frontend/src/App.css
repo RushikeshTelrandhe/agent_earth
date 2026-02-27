@@ -139,8 +139,14 @@ body::before {
 }
 
 .navbar-logo .logo-glyph {
-  font-size: 1.4rem;
-  filter: drop-shadow(0 0 8px rgba(123, 92, 255, 0.5));
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 12px rgba(123, 92, 255, 0.3);
 }
 
 .navbar-links {
@@ -228,6 +234,109 @@ body::before {
     opacity: 1;
   }
 }
+
+/* ── Hero Earth Animation ────────────────────────────── */
+.hero-earth-anim {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-earth-sphere {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-earth-core {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--accent-light), var(--accent-dark));
+  box-shadow:
+    0 0 40px var(--accent-glow),
+    0 0 80px rgba(123, 92, 255, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.3);
+  animation: earth-core-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes earth-core-pulse {
+  0% {
+    box-shadow: 0 0 40px var(--accent-glow), 0 0 80px rgba(123, 92, 255, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+
+  100% {
+    box-shadow: 0 0 60px var(--accent-glow), 0 0 120px rgba(123, 92, 255, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.hero-earth-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  top: 50%;
+  left: 50%;
+}
+
+.hero-earth-ring-1 {
+  width: 120px;
+  height: 120px;
+  margin-top: -60px;
+  margin-left: -60px;
+  border-color: rgba(123, 92, 255, 0.25);
+  border-top-color: var(--accent-light);
+  animation: earth-orbit 6s linear infinite;
+}
+
+.hero-earth-ring-2 {
+  width: 160px;
+  height: 160px;
+  margin-top: -80px;
+  margin-left: -80px;
+  border-color: rgba(123, 92, 255, 0.12);
+  border-right-color: var(--cyan);
+  animation: earth-orbit-reverse 8s linear infinite;
+  transform: rotateX(55deg);
+}
+
+.hero-earth-ring-3 {
+  width: 200px;
+  height: 200px;
+  margin-top: -100px;
+  margin-left: -100px;
+  border-color: rgba(123, 92, 255, 0.06);
+  border-bottom-color: var(--success);
+  animation: earth-orbit 12s linear infinite;
+  transform: rotateY(60deg) rotateX(20deg);
+}
+
+@keyframes earth-orbit {
+  from {
+    transform: rotateZ(0deg);
+  }
+
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes earth-orbit-reverse {
+  from {
+    transform: rotateX(55deg) rotateZ(360deg);
+  }
+
+  to {
+    transform: rotateX(55deg) rotateZ(0deg);
+  }
+}
+
 
 .hero-badge {
   display: inline-flex;
@@ -450,10 +559,20 @@ body::before {
 }
 
 .feature-icon {
-  font-size: 2rem;
+  font-size: 0.85rem;
+  font-weight: 800;
   margin-bottom: 16px;
-  display: inline-block;
-  filter: drop-shadow(0 0 10px rgba(123, 92, 255, 0.3));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(123, 92, 255, 0.12);
+  color: var(--accent-light);
+  border: 1px solid rgba(123, 92, 255, 0.2);
+  letter-spacing: 0.5px;
+  font-family: 'Inter', monospace;
 }
 
 .feature-card h3 {
@@ -721,8 +840,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 .card-icon {
-  font-size: 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 800;
   margin-bottom: 8px;
+  color: var(--accent-light);
+  letter-spacing: 0.5px;
+  font-family: 'Inter', monospace;
 }
 
 .card-value {
