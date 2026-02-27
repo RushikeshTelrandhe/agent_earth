@@ -15,7 +15,7 @@ import WebGLErrorBoundary from "./components/earth/WebGLErrorBoundary";
 // Lazy-load Crowdsense panel
 const CrowdsensePanel = lazy(() => import("./components/crowdsense/CrowdsensePanel"));
 
-const API = "/api";
+const API = import.meta.env.VITE_API_URL || "/api";
 
 function hasWebGL() {
   try {

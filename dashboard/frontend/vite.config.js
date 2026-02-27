@@ -14,5 +14,14 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-react': ['react', 'react-dom'],
+                    'vendor-plotly': ['react-plotly.js', 'plotly.js'],
+                    'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+                },
+            },
+        },
     },
 })

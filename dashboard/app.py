@@ -9,8 +9,10 @@ Now includes trust matrix, alliance data, and per-region rewards.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import glob
+import traceback
 from typing import Any, Dict
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -35,11 +37,38 @@ def create_app(static_folder: str | None = None) -> Flask:
         static_folder=static_folder,
         static_url_path="",
     )
-    CORS(app)
+    # ── CORS (environment-based whitelist) ────
+    allowed_origins = os.environ.get("ALLOWED_ORIGINS", "*")
+    if allowed_origins == "*":
+        CORS(app)
+    else:
+        origins = [o.strip() for o in allowed_origins.split(",") if o.strip()]
+        CORS(app, origins=origins)
+
+    # ── Logging ────
+    is_production = os.environ.get("FLASK_ENV", "production") == "production"
+    logging.basicConfig(
+        level=logging.INFO if is_production else logging.DEBUG,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+    logger = logging.getLogger("agent_earth")
 
     # Register crowdsense pilot layer
     from crowdsense.routes import crowdsense_bp
     app.register_blueprint(crowdsense_bp)
+
+    # ── Health Check ──────────────────────────────
+    @app.route("/health")
+    def health_check():
+        return jsonify({"status": "ok", "service": "agent-earth-api"})
+
+    # ── Global Error Handler ─────────────────────
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        logger.error(f"Unhandled exception: {e}")
+        if not is_production:
+            return jsonify({"error": str(e), "trace": traceback.format_exc()}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
     # ── API Routes ─────────────────────────────
 

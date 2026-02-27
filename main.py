@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from typing import Any
 
@@ -86,9 +87,11 @@ def cmd_dashboard(args: argparse.Namespace) -> None:
     """Launch the Flask dashboard."""
     from dashboard.app import create_app
 
+    port = int(os.environ.get("PORT", args.port))
+    debug = os.environ.get("FLASK_ENV", "development") != "production"
     app = create_app()
-    print(f"\n  Starting Agent Earth Dashboard on http://localhost:{args.port}")
-    app.run(host="0.0.0.0", port=args.port, debug=True)
+    print(f"\n  Starting Agent Earth Dashboard on http://localhost:{port}")
+    app.run(host="0.0.0.0", port=port, debug=debug)
 
 
 def main() -> None:
